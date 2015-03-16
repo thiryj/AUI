@@ -24,7 +24,7 @@ user_quit_command = False
 
 #declare constants
 
-search_term = "what is the Turing Test"
+search_term = "how do you make hot cocoa"
 
 search_result = AUI_google_search.call_google(search_term)
 print(search_result)

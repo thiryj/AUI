@@ -22,6 +22,7 @@ def call_google(mySearchVar):
     gkgAnswer = ""
     gkgDefinition_Word = ""
     gkgDefinition_Detail = ""
+    gkgRecipe = ""
     gconvert = ""
     result = ""    
     #run main section
@@ -77,7 +78,21 @@ def call_google(mySearchVar):
                 content = None
         except:
             pass
-            
+        
+        try:    #google recipe1
+            content = driver.find_element_by_css_selector('div._oDd').text
+            if content is not None:
+                gkgRecipe = content
+        except:
+            pass
+        
+        try:    #google recipe2 ._xXc
+            content = driver.find_element_by_css_selector('div._xXc').text
+            if content is not None:
+                gkgRecipe = content
+        except:
+            pass
+                
         try:   #google conversi
             #content = driver.find_element_by_partial_link_text("lhs_div")
             rhs_d = driver.find_element_by_id("ucw_rhs_d").get_attribute("value")
@@ -110,13 +125,13 @@ def call_google(mySearchVar):
                     #print("gconvert is: " + str(gconvert))
                     content = None
             except:
-                #pass
-                print("excepted out in try get conversion query")
+                pass
+                #print("excepted out in try get conversion query")
         except:
-            #pass
-            print("excepted out in try: by_i. content = " + str(content))
+            pass
+            #print("excepted out in try: by_i. content = " + str(content))
         
-        if gkgText or gkgAnswer or gkgDefinition_Word or gkgDefinition_Detail or gconvert != "":
+        if gkgText or gkgAnswer or gkgDefinition_Word or gkgDefinition_Detail or gkgRecipe != "" or gconvert != "":
             if gkgAnswer != "":
                 result = gkgAnswer
             if gkgText != "":
@@ -125,11 +140,13 @@ def call_google(mySearchVar):
                 result = result + gkgDefinition_Word
             if gkgDefinition_Detail != "":
                 result = result + gkgDefinition_Detail
+            if gkgRecipe != "":
+                result = result + gkgRecipe
             if gconvert != "":
                 result = gconvert
         else:
             print("could not find result")
-            result = None
+            result = "I'm sorry, I am unable to find any information on that topic right now"
     else:
         result = "WRONG_URL"
     #tearDown

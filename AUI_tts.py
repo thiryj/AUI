@@ -5,8 +5,11 @@ sys.path.append('c:\python34\lib\site-packages\pyttsx')
 import pyttsx
 engine = pyttsx.init('sapi5')
 
-def report_online():
-    engine.say("I am online and listing.")
+def report_online(name=None):
+    greeting = "I am online and listening.  "
+    if name != None:
+        greeting = greeting + "Please call me " + name
+    engine.say(greeting)
     engine.runAndWait()
 
 def say(text):

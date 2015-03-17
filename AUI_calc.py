@@ -1,4 +1,4 @@
-#Google search module
+#Google math module
 #Written by John Thiry - 2015
 
 #import selenium
@@ -27,7 +27,6 @@ def solve(mySearchVar):
     if driver.title == "Google":
         driver.find_element_by_id('lst-ib').clear()
         driver.find_element_by_id('lst-ib').send_keys(mySearchVar + Keys.RETURN)
-        #driver.find_element_by_id("gbqfb").click()
         if driver.find_element_by_id("cwos"):
             answer = driver.find_element_by_id("cwos").text
             result = "the answer to " + mySearchVar + " is " + answer

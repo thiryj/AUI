@@ -23,8 +23,9 @@ def call_google(mySearchVar):
     gkgDefinition_Word = ""
     gkgDefinition_Detail = ""
     gkgRecipe = ""
+    gkgmath = ""
     gconvert = ""
-    result = ""    
+    result = ""
     #run main section
     #print("in selenium section.  Search term is:> " + mySearchVar)
     driver.get(base_url + "")
@@ -130,8 +131,16 @@ def call_google(mySearchVar):
         except:
             pass
             #print("excepted out in try: by_i. content = " + str(content))
+        try:
+            if driver.find_element_by_id("cwos"):
+                answer = driver.find_element_by_id("cwos").text
+                gkgmath = "the answer to " + mySearchVar + " is " + answer
+            else:
+                result = "UNDEFINED_MATH_PROBLEM"
+        except:
+            pass
         
-        if gkgText or gkgAnswer or gkgDefinition_Word or gkgDefinition_Detail or gkgRecipe != "" or gconvert != "":
+        if gkgText !="" or gkgAnswer != "" or gkgDefinition_Word !="" or gkgDefinition_Detail != "" or gkgRecipe != "" or gkgmath !="" or gconvert != "":
             if gkgAnswer != "":
                 result = gkgAnswer
             if gkgText != "":
@@ -144,6 +153,8 @@ def call_google(mySearchVar):
                 result = result + gkgRecipe
             if gconvert != "":
                 result = gconvert
+            if gkgmath != "":
+                result = gkgmath
         else:
             print("could not find result")
             result = "I'm sorry, I am unable to find any information on that topic right now"

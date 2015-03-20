@@ -10,6 +10,7 @@ import AUI_calc
 import AUI_parse_input
 import AUI_utils
 import AUI_constants
+import AUI_controlLights
 
 #import recipe module
 #import AUI_recipe
@@ -47,6 +48,25 @@ while user_quit_command is False:
         AUI_User_Name = AUI_parse_input.which_list_item_is_in_string(AUI_constants.family_names,command)
         AUI_tts.say(random.choice(AUI_constants.phrase_list_greet_user)+ AUI_User_Name)
         query_prompt = random.choice(AUI_constants.phrase_list_solicit_command)
+        continue
+
+    if any(phrase in command for phrase in AUI_constants.keyword_list_home_automation_triggers):
+        automation_action = AUI_parse_input.which_list_item_is_in_string(AUI_constants.keyword_list_home_automation_triggers,command)
+        if any(phrase in command for phrase in AUI_constants.keyword_list_home_automation_devices):
+            automation_device = AUI_parse_input.which_list_item_is_in_string(AUI_constants.keyword_list_home_automation_devices,command)
+            if any(phrase in command for phrase in AUI_constants.keyword_list_home_automation_control_up):
+                control_direction = 100
+            elif any(phrase in command for phrase in AUI_constants.keyword_list_home_automation_control_down):
+                control_direction = 0
+            else:
+                pass
+        print("device= " + automation_device + ", direction= " + str(control_direction))
+        if automation_device == "all" or automation_device == "house":
+            #cycle through and control all lights
+            for key in AUI_constants.Control4_devices.items():
+                AUI_controlLights.setLevel(AUI_constants.Control4_devices[key],control_direction)
+                continue
+        AUI_controlLights.setLevel(AUI_constants.Control4_devices[automation_device],control_direction)
         continue
         
     if "search" in command or "google" in command:

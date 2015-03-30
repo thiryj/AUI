@@ -23,6 +23,7 @@ PARAM_NAME_DATA_TYPE = "\"STRING\""
 PARAM_NAME_DEVICE = "\"idDevice\""
 PARAM_NAME_DEVICE_TYPE = "\"INT\""
 COMMAND_SETLEVEL = "SET_LEVEL"
+COMMAND_SETTEMP = "V1 HEAT_SETPOINT"
 
 '''
 Sets intensity of dimmer switch
@@ -48,10 +49,35 @@ def setLevel(id, value):
     Message_Header_Close = "</c4soap>"
     Message = Message_Header_Open + Param_1_Open + Command_1_Open + Param_1_2_Set_Open + Param_1_2_Set_1_Open + Param_1_2_Set_1_Close + \
               Param_1_2_Set_Close + Command_1_Close + Param_1_Close + Param_2_1_Open + Param_2_1_Close + Message_Header_Close
+    ##print(Message)
+    Messageb = bytes(Message,ENCODING)
+    directorConn.sendall(Messageb + bytes(MESSAGE_TERMINATION,ENCODING))
+    directorConn.close()
+
+def setHeatTemp(id, value):
+    directorConn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    directorConn.connect((TCP_IP,TCP_PORT))
+    Message_Header_Open = "<c4soap name=" + C4SOAP_NAME + " async=" + ASYNC_STATE + ">"
+    Param_1_Open = "<param name=" + PARAM_NAME_DATA + " type=" + PARAM_NAME_DATA_TYPE + ">"
+    Command_1_Open = "<devicecommand><command>" + COMMAND_SETLEVEL + "</command>"
+    Param_1_2_Set_Open = "<params>"
+    Param_1_2_Set_1_Open = "<param><name>LEVEL</name><value type=" + \
+                           str(PARAM_NAME_DEVICE_TYPE) + "><static>" + str(value) + "</static></value>"
+    Param_1_2_Set_1_Close = "</param>"
+    Param_1_2_Set_Close = "</params>"
+    Command_1_Close = "</devicecommand>"
+    Param_1_Close = "</param>"
+    Param_2_1_Open = "<param name=" + PARAM_NAME_DEVICE + \
+                     " type=" + PARAM_NAME_DEVICE_TYPE + ">" + str(id)
+    Param_2_1_Close = "</param>"
+    Message_Header_Close = "</c4soap>"
+    Message = Message_Header_Open + Param_1_Open + Command_1_Open + Param_1_2_Set_Open + Param_1_2_Set_1_Open + Param_1_2_Set_1_Close + \
+              Param_1_2_Set_Close + Command_1_Close + Param_1_Close + Param_2_1_Open + Param_2_1_Close + Message_Header_Close
     print(Message)
     Messageb = bytes(Message,ENCODING)
     directorConn.sendall(Messageb + bytes(MESSAGE_TERMINATION,ENCODING))
     directorConn.close()
+
 
 '''
 Ramps to a specified level in milliseconds
@@ -74,9 +100,12 @@ NOTE: will return an error if used on light switches use getLightState instead
 def getLevel(id):
     directorConn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     directorConn.connect((TCP_IP,TCP_PORT))
-    MESSAGE = '<c4soap name="GetVariable" async="False"><param name = "iddevice" type = "INT">%d</param><param name = "idvariable" type = "INT">1001</param></c4soap>' % (id)
-    directorConn.sendall(MESSAGE + "\0")
+    Message = '<c4soap name="GetVariable" async="False"><param name = "iddevice" type = "INT">%d</param><param name = "idvariable" type = "INT">1004</param></c4soap>' % (id)
+    Messageb = bytes(Message,ENCODING)
+    directorConn.sendall(Messageb + bytes(MESSAGE_TERMINATION,ENCODING))
+    #directorConn.sendall(MESSAGE + "\0")
     data = directorConn.recv(BUFFER_SIZE)
+    print("data = " + str(data))
     directorConn.close()
     data = BeautifulSoup(data)
     value = data.find("variable")
@@ -103,8 +132,11 @@ def getLightState(id):
 
 
 ##setLevel(230, 0)
-setLevel(230, 0)
+setHeatTemp(31, 65)
 ##rampToLevel(264, 50, 3000)
 ##print getLevel(264)
 ##print getLightState(276)
+print("getLevel value is "+ getLevel(31))
+
+
 

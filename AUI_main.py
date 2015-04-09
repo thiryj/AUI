@@ -68,9 +68,14 @@ while user_quit_command is False:
                 continue
         AUI_controlLights.setLevel(AUI_constants.Control4_devices[automation_device],control_direction)
         continue
+    
+    if "change channel" in command or "watch" in command:
+        print("caught the change channel command")
+        AUI_controlLights.cable_channel_master(command)
+        continue
         
     if "search" in command or "google" in command:
-        searc_term = AUI_sr.mic_input("What should I google for you.")
+        search_term = AUI_sr.mic_input("What should I google for you.")
         AUI_tts.say("working on that")
         search_result = AUI_google_search.call_google(search_term)
         AUI_tts.say(search_result)
